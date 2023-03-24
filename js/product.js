@@ -48,3 +48,35 @@ const makeColors = (colors) => {
     select.appendChild(option);
   });
 };
+
+const button = document.querySelector("#addToCart");
+button.addEventListener("click", () => {
+  const color = document.querySelector("#colors").value;
+  const quantity = document.querySelector("#quantity").value;
+
+  if (checkInvalidCart(color, quantity)) return;
+  saveOrder(color, quantity);
+});
+
+const checkInvalidCart = (color, quantity) => {
+  if (color === "" && quantity != 0) {
+    alert("Merci de sélectionner une couleur");
+    return true;
+  } else if (quantity == 0 && color !== "") {
+    alert("Merci de sélectionner une quantité");
+    return true;
+  } else if (color === "" && quantity == 0) {
+    alert("Merci de sélectionner une couleur et une quantité");
+    return true;
+  }
+};
+
+const saveOrder = (color, quantity) => {
+  const data = {
+    id: idProduct,
+    color: color,
+    quantity: Number(quantity),
+  };
+
+  localStorage.setItem(idProduct, JSON.stringify(data));
+};
