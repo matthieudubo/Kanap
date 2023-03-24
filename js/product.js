@@ -1,45 +1,50 @@
-const idProduct = window.location.search.split("?").join("");
-let price = 0;
+const idProduct = new URLSearchParams(window.location.search).get("id");
 
-const fetchDataProduct = () => {
-  fetch(`http://localhost:3000/api/products/${idProduct}`)
-    .then((res) => res.json())
-    .then((data) => {
-      document.querySelector(
-        ".item__img"
-      ).innerHTML = `<img src="${data.imageUrl}" alt="${data.altTxt}" />`;
-      document.querySelector(
-        ".item__content__titlePrice"
-      ).innerHTML = `<h1 id="title">${data.name}</h1><p>Prix : <span id="price">${data.price}</span>€</p>`;
-      document.querySelector(
-        ".item__content__description"
-      ).innerHTML = `<p id="description">${data.description}</p>`;
-      document.querySelector("#colors").innerHTML = data.colors.map(
-        (color) => `<option value="${color}">${color}</option>`
-      );
-      price = data.price;
-    });
+fetch(`http://localhost:3000/api/products/${idProduct}`)
+  .then((res) => res.json())
+  .then((data) => fetchDataProduct(data));
+
+const fetchDataProduct = (product) => {
+  const { altTxt, colors, description, imageUrl, name, price, _id } = product;
+
+  makeImage(imageUrl, altTxt);
+  makeTitle(name);
+  makePrice(price);
+  makeDescription(description);
+  makeColors(colors);
 };
 
-const button = document.querySelector("#addToCart");
-if (button != null) {
-  button.addEventListener("click", () => {
-    const color = document.querySelector("#colors").value;
-    const quantity = document.querySelector("#quantity").value;
+const makeImage = (imgUrl, altTxt) => {
+  const img = document.createElement("img");
+  img.src = imgUrl;
+  img.alt = altTxt;
 
-    if (color === "" || quantity == 0) {
-      alert("Merci de choisir une couleur et une quantité");
-    }
+  const parent = document.querySelector(".item__img");
 
-    const data = {
-      id: idProduct,
-      color: color,
-      quantity: Number(quantity),
-      price: price,
-    };
+  if (parent !== null) {
+    parent.appendChild(img);
+  }
+};
 
-    localStorage.setItem(idProduct, JSON.stringify(data));
+const makeTitle = (name) => {
+  document.querySelector("#title").textContent = name;
+};
+
+const makePrice = (price) => {
+  document.querySelector("#price").textContent = price;
+};
+
+const makeDescription = (description) => {
+  document.querySelector("#description").textContent = description;
+};
+
+const makeColors = (colors) => {
+  const select = document.querySelector("#colors");
+
+  colors.map((color) => {
+    const option = document.createElement("option");
+    option.value = color;
+    option.textContent = color;
+    select.appendChild(option);
   });
-}
-
-fetchDataProduct();
+};
