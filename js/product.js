@@ -68,6 +68,9 @@ const checkInvalidCart = (color, quantity) => {
   } else if (color === "" && quantity == 0) {
     alert("Merci de sélectionner une couleur et une quantité");
     return true;
+  } else if (quantity > 100) {
+    alert("Vous ne pouvez pas commander plus de 100 articles");
+    return true;
   }
 };
 
