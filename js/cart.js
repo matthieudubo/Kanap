@@ -1,7 +1,8 @@
-const cart = [];
+let cartGlobal = [];
 
-const getItemsFromLocalStorage = async () => {
+const getProductsFromLocalStorage = async () => {
   const numberOfProducts = localStorage.length;
+  const cart = [];
 
   for (let i = 0; i < numberOfProducts; i++) {
     const product = JSON.parse(localStorage.getItem(localStorage.key(i)));
@@ -19,8 +20,10 @@ const getItemsFromLocalStorage = async () => {
       cart.push(product);
     }
   }
-  console.log(cart);
-  cart.map((item) => displayProduct(item));
+  cart.map((product) => displayProduct(product));
+  cartGlobal = cart;
+  displayTotalQuantity();
+  displayTotalPrice();
 };
 
 const displayProduct = (product) => {
@@ -29,7 +32,6 @@ const displayProduct = (product) => {
   const cartProductContent = makeCartProductContent(product);
 
   displayArticle(article);
-
   article.appendChild(div);
   article.appendChild(cartProductContent);
 };
@@ -105,6 +107,10 @@ const addQuantityToSeetings = (product, settings) => {
   input.max = "100";
   input.value = product.quantity;
 
+  input.addEventListener("change", () =>
+    updatePriceAndQuantity(product, input.value)
+  );
+
   const p = document.createElement("p");
   p.textContent = "Qté : ";
 
@@ -112,6 +118,24 @@ const addQuantityToSeetings = (product, settings) => {
   quantity.appendChild(input);
 
   settings.appendChild(quantity);
+};
+
+const updatePriceAndQuantity = (product, newQuantity) => {
+  const productToUpdate = cartGlobal.find((p) => p.id === product.id);
+  productToUpdate.quantity = Number(newQuantity);
+
+  displayTotalQuantity();
+  displayTotalPrice();
+  saveNewDataToLocalStorage(product);
+};
+
+const saveNewDataToLocalStorage = (product) => {
+  const data = {
+    id: product.id,
+    color: product.color,
+    quantity: product.quantity,
+  };
+  localStorage.setItem(product.id, JSON.stringify(data));
 };
 
 const addDeleteToSettings = (settings) => {
@@ -131,4 +155,21 @@ const displayArticle = (article) => {
   document.querySelector("#cart__items").appendChild(article);
 };
 
-getItemsFromLocalStorage();
+const displayTotalQuantity = () => {
+  const totalQuantity = document.querySelector("#totalQuantity");
+  let total = 0;
+  cartGlobal.map((product) => (total += product.quantity));
+  totalQuantity.textContent = total;
+};
+
+const displayTotalPrice = () => {
+  let total = 0;
+  const totalPrice = document.querySelector("#totalPrice");
+  cartGlobal.map((product) => {
+    const totalUnitPrice = product.price * product.quantity;
+    total += totalUnitPrice;
+  });
+  totalPrice.textContent = total;
+};
+
+getProductsFromLocalStorage();
