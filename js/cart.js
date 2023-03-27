@@ -202,3 +202,154 @@ const displayTotalPrice = () => {
 };
 
 getProductsFromLocalStorage();
+
+// -------------------- FORM PART --------------------
+
+const orderBtn = document.querySelector("#order");
+
+orderBtn.addEventListener("click", (e) => submitForm(e));
+
+const submitForm = (e) => {
+  e.preventDefault();
+
+  if (cartGlobal.length === 0) {
+    alert(
+      "Merci d'ajouter des éléments dans votre panier avant de passer une commande."
+    );
+    return;
+  }
+
+  if (isFormValid()) {
+    const body = makeRequestBody();
+
+    fetch("http://localhost:3000/api/products/order", {
+      method: "POST",
+      body: JSON.stringify(body),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => console.log(data))
+      .catch((err) => console.log(err));
+  }
+};
+
+const isFormValid = () => {
+  isFirstnameValid();
+  isLastnameValid();
+  isAddressValid();
+  isCityValid();
+  isEmailValid();
+  if (
+    isFirstnameValid() &&
+    isLastnameValid() &&
+    isAddressValid() &&
+    isCityValid() &&
+    isEmailValid()
+  ) {
+    return true;
+  } else {
+    return false;
+  }
+};
+
+const isFirstnameValid = () => {
+  const firstname = document.querySelector("#firstName").value;
+  const regex = /^[\w'\-,.][^0-9_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~<>;:[\]]{2,}$/;
+  const errorMessage = document.querySelector("#firstNameErrorMsg");
+  if (regex.test(firstname)) {
+    errorMessage.textContent = "";
+    return true;
+  } else if (firstname.value === "") {
+    errorMessage.textContent = "Merci de renseigner votre prénom";
+    return false;
+  } else {
+    errorMessage.textContent =
+      "Merci de ne pas utiliser de chiffres ou de caractères spéciaux dans votre prénom";
+    return false;
+  }
+};
+
+const isLastnameValid = () => {
+  const lastname = document.querySelector("#lastName").value;
+  const regex = /^[\w'\-,.][^0-9_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~<>;:[\]]{2,}$/;
+  const errorMessage = document.querySelector("#lastNameErrorMsg");
+  if (regex.test(lastname)) {
+    errorMessage.textContent = "";
+    return true;
+  } else if (lastname.value === "") {
+    errorMessage.textContent = "Merci de renseigner votre nom";
+    return false;
+  } else {
+    errorMessage.textContent =
+      "Merci de ne pas utiliser de chiffres ou de caractères spéciaux dans votre nom";
+    return false;
+  }
+};
+
+const isAddressValid = () => {
+  const address = document.querySelector("#address").value;
+  const errorMessage = document.querySelector("#addressErrorMsg");
+  if (address === "") {
+    errorMessage.textContent = "Merci de bien vouloir renseigner votre adresse";
+    return false;
+  } else {
+    errorMessage.textContent = "";
+    return true;
+  }
+};
+
+const isCityValid = () => {
+  const city = document.querySelector("#city").value;
+  const errorMessage = document.querySelector("#cityErrorMsg");
+  if (city === "") {
+    errorMessage.textContent = "Merci de bien vouloir renseigner votre ville";
+    return false;
+  } else {
+    errorMessage.textContent = "";
+    return true;
+  }
+};
+
+const isEmailValid = () => {
+  const email = document.querySelector("#email").value;
+  const regex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+  const errorMessage = document.querySelector("#emailErrorMsg");
+  if (regex.test(email)) {
+    errorMessage.textContent = "";
+    return true;
+  } else if (email.value === "") {
+    errorMessage.textContent = "Merci de bien vouloir renseigner votre email";
+    return false;
+  } else {
+    errorMessage.textContent = "Merci de renseigner une adresse mail valide";
+    return false;
+  }
+};
+
+const makeRequestBody = () => {
+  const form = document.querySelector(".cart__order__form");
+  const body = {
+    contact: {
+      firstName: form.elements.firstName.value,
+      lastName: form.elements.lastName.value,
+      address: form.elements.address.value,
+      city: form.elements.city.value,
+      email: form.elements.email.value,
+    },
+    products: getIdsFromLocalStorage(),
+  };
+  return body;
+};
+
+const getIdsFromLocalStorage = () => {
+  const numberOfProducts = localStorage.length;
+  const ids = [];
+  for (let i = 0; i < numberOfProducts; i++) {
+    const key = localStorage.key(i);
+    const id = key.split(":")[0];
+    ids.push(id);
+  }
+  return ids;
+};
