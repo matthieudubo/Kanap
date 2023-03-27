@@ -90,7 +90,7 @@ const makeSettings = (product, div) => {
   settings.classList.add("cart__item__content__settings");
 
   addQuantityToSeetings(product, settings);
-  addDeleteToSettings(settings);
+  addDeleteToSettings(settings, product);
 
   div.appendChild(settings);
 };
@@ -142,7 +142,7 @@ const saveNewDataToLocalStorage = (product) => {
   localStorage.setItem(key, JSON.stringify(data));
 };
 
-const addDeleteToSettings = (settings) => {
+const addDeleteToSettings = (settings, product) => {
   const div = document.createElement("div");
   div.classList.add("cart__item__content__settings__delete");
 
@@ -150,9 +150,34 @@ const addDeleteToSettings = (settings) => {
   p.classList.add("deleteItem");
   p.textContent = "Supprimer";
 
-  div.appendChild(p);
+  p.addEventListener("click", () => deleteProduct(product));
 
+  div.appendChild(p);
   settings.appendChild(div);
+};
+
+const deleteProduct = (product) => {
+  const productToDelete = cartGlobal.findIndex(
+    (p) => p.id === product.id && p.color === product.color
+  );
+
+  cartGlobal.splice(productToDelete, 1);
+  displayTotalPrice();
+  displayTotalQuantity();
+  deleteDataFromLocalStorage(product);
+  deleteArticle(product);
+};
+
+const deleteArticle = (product) => {
+  const articleToDelete = document.querySelector(
+    `article[data-id="${product.id}"][data-color="${product.color}"]`
+  );
+  articleToDelete.remove();
+};
+
+const deleteDataFromLocalStorage = (product) => {
+  const key = `${product.id}:${product.color}`;
+  localStorage.removeItem(key);
 };
 
 const displayArticle = (article) => {
