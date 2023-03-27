@@ -27,7 +27,7 @@ const getProductsFromLocalStorage = async () => {
 };
 
 const displayProduct = (product) => {
-  const article = makeArticle(product, "card__item");
+  const article = makeArticle(product, "cart__item");
   const div = makeDivImg(product);
   const cartProductContent = makeCartProductContent(product);
 
@@ -58,7 +58,7 @@ const makeDivImg = (product) => {
 
 const makeCartProductContent = (product) => {
   const div = document.createElement("div");
-  div.classList.add("card__item__content");
+  div.classList.add("cart__item__content");
 
   makeDescription(product, div);
   makeSettings(product, div);
