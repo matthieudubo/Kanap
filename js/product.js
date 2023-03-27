@@ -82,5 +82,12 @@ const saveOrder = (color, quantity) => {
     quantity: Number(quantity),
   };
 
-  localStorage.setItem(key, JSON.stringify(data));
+  if (localStorage.getItem(key)) {
+    const product = JSON.parse(localStorage.getItem(key));
+    console.log(product);
+    data.quantity = Number(quantity) + product.quantity;
+    localStorage.setItem(key, JSON.stringify(data));
+  } else {
+    localStorage.setItem(key, JSON.stringify(data));
+  }
 };
