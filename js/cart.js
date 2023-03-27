@@ -121,21 +121,25 @@ const addQuantityToSeetings = (product, settings) => {
 };
 
 const updatePriceAndQuantity = (product, newQuantity) => {
-  const productToUpdate = cartGlobal.find((p) => p.id === product.id);
+  const productToUpdate = cartGlobal.find(
+    (p) => p.id === product.id && p.color === product.color
+  );
   productToUpdate.quantity = Number(newQuantity);
 
   displayTotalQuantity();
   displayTotalPrice();
-  saveNewDataToLocalStorage(product);
+  saveNewDataToLocalStorage(productToUpdate);
 };
 
 const saveNewDataToLocalStorage = (product) => {
+  const key = `${product.id}:${product.color}`;
+
   const data = {
     id: product.id,
     color: product.color,
     quantity: product.quantity,
   };
-  localStorage.setItem(product.id, JSON.stringify(data));
+  localStorage.setItem(key, JSON.stringify(data));
 };
 
 const addDeleteToSettings = (settings) => {

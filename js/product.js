@@ -75,11 +75,12 @@ const checkInvalidCart = (color, quantity) => {
 };
 
 const saveOrder = (color, quantity) => {
+  const key = `${idProduct}:${color}`;
   const data = {
     id: idProduct,
     color: color,
     quantity: Number(quantity),
   };
 
-  localStorage.setItem(idProduct, JSON.stringify(data));
+  localStorage.setItem(key, JSON.stringify(data));
 };
