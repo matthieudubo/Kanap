@@ -233,7 +233,7 @@ const submitForm = (e) => {
       .then((data) => {
         window.location.href = `./confirmation.html?orderId=${data.orderId}`;
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.error(err));
   }
 };
 

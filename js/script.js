@@ -1,7 +1,7 @@
 fetch("http://localhost:3000/api/products")
   .then((res) => res.json())
   .then((data) => addProducts(data))
-  .catch((err) => console.log(err));
+  .catch((err) => console.error(err));
 
 const addProducts = (data) => {
   data.map((product) => {

@@ -57,6 +57,13 @@ button.addEventListener("click", () => {
 
   if (checkInvalidCart(color, quantity)) return;
   saveOrder(color, quantity);
+
+  if (
+    confirm(
+      "Produit(s) ajouté(s) au panier.\nVoulez-vous aller à votre panier ?"
+    )
+  )
+    window.location.href = "./cart.html";
 });
 
 const checkInvalidCart = (color, quantity) => {
@@ -85,7 +92,6 @@ const saveOrder = (color, quantity) => {
 
   if (localStorage.getItem(key)) {
     const product = JSON.parse(localStorage.getItem(key));
-    console.log(product);
     data.quantity = Number(quantity) + product.quantity;
     localStorage.setItem(key, JSON.stringify(data));
   } else {
