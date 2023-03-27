@@ -27,6 +27,7 @@ const makeImage = (imgUrl, altTxt) => {
 };
 
 const makeTitle = (name) => {
+  document.title = name;
   document.querySelector("#title").textContent = name;
 };
 
